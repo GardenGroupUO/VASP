@@ -20,6 +20,7 @@ class FED():
 	
 
     def __init__(self):
+        self.ratio = 1.6181
         self.pos_number = 0
         self.energies = []
         self.positions = []
@@ -29,6 +30,7 @@ class FED():
         self.right_texts = []
         self.colours = []
         self.links = []
+        self.barriers = []
         
 
 
@@ -93,7 +95,7 @@ class FED():
     def add_link(self, start_level_id, end_level_id, color = 'k',
              ls='--', linewidth=1):
         '''
-        This is a method of the FED class that will take in a stat and end
+        This is a method of the FED class that will take in a start and end
         level id (start/end_level_id) and create a linker between those
         two levels. This will be used for levels that do not have a barrier
         between them.
@@ -115,9 +117,41 @@ class FED():
 
         Returns
         _______
-        Appends all of the imformation about the linker to a list in the
-        class link attribute
+        Appends a tuple containin the imformation about the linker to a list in the
+        class links attribute.
         '''
 
         self.links[start_level_id].append((end_level_id, ls, linewidth, color))
 
+    def add_barrier(self, start_level_id, end_level_id,
+                energy, ls='-', linewidth=0.5, color='k'):
+        '''
+        This is a method of the FED class that will take in a start/end level id 
+        and an energy and create a barrier between those two levels. 
+
+        Parameters
+        __________
+        start_level_id : int
+            The id (index of the level) of the level that you want the
+            barrier to start from.
+        end_level_id : int
+            The id (index of the level) of the level that you want the
+            barrier to end.
+        energy : int
+            The energy (saddle point) of the barrier
+        ls : str
+            The barrier style. (Default = '-')
+        linewidth : int
+            The width of the link.
+        color : str
+            The colour of the barrier. (Default = 'k')
+
+        Returns
+        _______
+        Appends a tuple containing the information about the barrier to a
+        list in the class barriers attribute. 
+        '''
+
+        self.barriers[start_level_id].append((end_level_id, energy, ls, linewidth, color))
+
+    
