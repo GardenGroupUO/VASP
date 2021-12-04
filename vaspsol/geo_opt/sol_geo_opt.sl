@@ -82,8 +82,9 @@ for i in {0..99}; do
   chift=`grep -i FERMI_SHIFT out | tail -n 1 | cut -d= -f 2`
   fermi=`grep -i fermi OUTCAR | tail -1 | awk '{print $3}'`
   udiff=`echo "-1*($phiref + $chift + $fermi) - $utarget" | bc -l`
+  pot=`echo "$phiref + $chift + $fermi"`
   nel=`grep NELECT INCAR | awk '{print $3}'`
-  echo 'Iteration    NELECT    FermiShift    FermiE    SystPot' 	
+  echo 'Iteration    NELECT    FermiShift    FermiE    PotentialDiff'
   echo $i  $nel  $chift  $fermi  $udiff
 
   if (( $(echo "sqrt($udiff^2) < $thr" | bc -l) )); then
