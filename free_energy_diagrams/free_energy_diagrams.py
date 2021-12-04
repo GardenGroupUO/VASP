@@ -33,8 +33,6 @@ class FED():
         self.barriers = []
         
 
-
-    
     def add_level(self, energy, bottom_text='', position=None, 
                 top_text='Energy', left_text='', right_text='', color='k'):
         '''
@@ -154,4 +152,5 @@ class FED():
 
         self.barriers[start_level_id].append((end_level_id, energy, ls, linewidth, color))
 
-    
+    def auto_adjust():
+
