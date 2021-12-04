@@ -41,7 +41,6 @@ class FED():
 
         Parameters
         __________
-
         energy : int
             The energy of the level in eV
         bottom_text : str
@@ -62,7 +61,6 @@ class FED():
 
         Returns
         _______
-
         Append all the data about the level in question to the relevant
         class attributes. 
 
@@ -92,4 +90,34 @@ class FED():
         self.colours.append(color)
         self.links.append(link)
 
+    def add_link(self, start_level_id, end_level_id, color = 'k',
+             ls='--', linewidth=1):
+        '''
+        This is a method of the FED class that will take in a stat and end
+        level id (start/end_level_id) and create a linker between those
+        two levels. This will be used for levels that do not have a barrier
+        between them.
+
+        Parameters
+        __________
+        start_level_id : int
+            The id (index of the level) of the level that you want the
+            link to start from.
+        end_level_id : int
+            The id (index of the level) of the level that you want the
+            link to end.
+        color : str
+            The colour of the link.
+        ls : str
+            The link style.
+        linewidth : int
+            The width of the link.
+
+        Returns
+        _______
+        Appends all of the imformation about the linker to a list in the
+        class link attribute
+        '''
+
+        self.links[start_level_id].append((end_level_id, ls, linewidth, color))
 
