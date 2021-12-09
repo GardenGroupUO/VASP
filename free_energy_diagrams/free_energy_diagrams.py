@@ -21,6 +21,11 @@ class FED():
 
     def __init__(self):
         self.ratio = 1.6181
+        self.dimension = 'auto'
+        self.space = 'auto'
+        self.offset = 'auto'
+        self.offset_ratio = '0.02'
+
         self.pos_number = 0
         self.energies = []
         self.positions = []
@@ -40,7 +45,7 @@ class FED():
         for a new energy level into the lists required.
 
         Parameters
-        __________
+        ----------
         energy : int
             The energy of the level in eV
         bottom_text : str
@@ -60,7 +65,7 @@ class FED():
             Colour of the level. (default = 'k')
 
         Returns
-        _______
+        -------
         Append all the data about the level in question to the relevant
         class attributes. 
 
@@ -99,7 +104,7 @@ class FED():
         between them.
 
         Parameters
-        __________
+        ----------
         start_level_id : int
             The id (index of the level) of the level that you want the
             link to start from.
@@ -114,9 +119,9 @@ class FED():
             The width of the link.
 
         Returns
-        _______
-        Appends a tuple containin the imformation about the linker to a list in the
-        class links attribute.
+        -------
+        Appends a tuple containin the imformation about the linker to a list in 
+        the class links attribute.
         '''
 
         self.links[start_level_id].append((end_level_id, ls, linewidth, color))
@@ -128,7 +133,7 @@ class FED():
         and an energy and create a barrier between those two levels. 
 
         Parameters
-        __________
+        ----------
         start_level_id : int
             The id (index of the level) of the level that you want the
             barrier to start from.
@@ -145,12 +150,51 @@ class FED():
             The colour of the barrier. (Default = 'k')
 
         Returns
-        _______
+        -------
         Appends a tuple containing the information about the barrier to a
         list in the class barriers attribute. 
         '''
 
         self.barriers[start_level_id].append((end_level_id, energy, ls, linewidth, color))
 
-    def auto_adjust():
+    def auto_adjust(self):
+        '''
+        This method of the FED class will use the golden ratio to set the 
+        best dimension and space between the levels.
+
+        Affects
+        
+        self.dimension
+        self.space
+        self.offset
+        '''
+        # Max range between the energy
+        Energy_variation = abs(max(self.energies) - min(self.energies))
+        if self.dimension == 'auto' or self.space == 'auto':
+            # Unique positions of the levels
+            unique_positions = float(len(set(self.positions)))
+            space_for_level = Energy_variation*self.ratio/unique_positions
+            self.dimension = space_for_level*0.7
+            self.space = space_for_level*0.3
+
+        if self.offset == 'auto':
+            self.offset = Energy_variation*self.offset_ratio
+
+    def plot(self, ylabel='Energy (Ev)', ax: plt.Axes = None):
+        '''
+        This is a method of the FED class that will plot the energy diagram.
+
+        Parameters
+        ----------
+        ylabel : str
+            The label for the y axis. "Energy (eV)"
+        ax : plt.Axes
+            The axes to plto to. If not specified, a figure and axis will
+            be created.   
+
+        Returns
+        -------
+        fig (plt.figure) and ax (fig.add_subplot())     
+        '''
+        
 
