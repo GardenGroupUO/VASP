@@ -47,44 +47,44 @@
 
  # Standard VASP tags
 
- # ENCUT = Specifies the cutoff energy for the plane wave basis set in eV.
- # NELECT = Sets the number of electrons.
- # AMIX = Specifies the linear mixing parameter.
- # EDIFF = Specifies the global break condition for the electronic Selfconsistent-loop in eV.
- # EDIFFG = Defines the break condition for the ionic relaxation loop.
- # PREC = Specifies the "precision" mode.
- # ISTART = Determines whether or not to read the WAVECAR file (1 = Continuation job: "restart with constant energy cut-off").
- # NELM = Sets the maximum number of electronic selconsistency steps.
- # ISYM = Determines the way that VASP treats Symmetry (0 = VASP does not use symmetry).
- # ISPIN = Specifies spin polarisation (1 = non spin polarised calculations are performed).
- # SIGMA = Specifies the width of smearing in eV.
- # ISMEAR = Determines how the partial occupancies are set for each orbital (-1 = Fermi smearing).
- # ALGO = Specifies the electronic minimisation algorithm.
- # MAXMIXS = pecifies the max number steps stored in Broyden mixer.
- # LCHARG = Determines whether the charge densities (CHGCAR and CHG) are written.
- # LWAVE = Determines whether the Wavefunctions are writen to the WAVECAR file at the end of a run.
- # LREAL = Determines whether the projection operators are evaluated in real-space or in reciprocal space.
- # NSW = Sets maximum number of ionic steps.
- # IBRION = Determines how the ions are updated and moved.
- # POTIM = Sets the step width scaling for ionic relaxations.
- # IOPT = Choose which force based optimizer to use (2 = Conjugate Gradient, 3 = Quick-Min, 7 = Fast Inertial Relax Engine).
+ # encut = Specifies the cutoff energy for the plane wave basis set in eV.
+ # nelect = Sets the number of electrons.
+ # amix = specifies the linear mixing parameter.
+ # ediff = specifies the global break condition for the electronic selfconsistent-loop in ev.
+ # ediffg = defines the break condition for the ionic relaxation loop.
+ # prec = specifies the "precision" mode.
+ # istart = determines whether or not to read the wavecar file (1 = continuation job: "restart with constant energy cut-off").
+ # nelm = sets the maximum number of electronic selconsistency steps.
+ # isym = determines the way that vasp treats symmetry (0 = vasp does not use symmetry).
+ # ispin = specifies spin polarisation (1 = non spin polarised calculations are performed).
+ # sigma = specifies the width of smearing in ev.
+ # ismear = determines how the partial occupancies are set for each orbital (-1 = fermi smearing).
+ # algo = specifies the electronic minimisation algorithm.
+ # maxmixs = pecifies the max number steps stored in broyden mixer.
+ # lcharg = determines whether the charge densities (chgcar and chg) are written.
+ # lwave = determines whether the wavefunctions are writen to the wavecar file at the end of a run.
+ # lreal = determines whether the projection operators are evaluated in real-space or in reciprocal space.
+ # nsw = sets maximum number of ionic steps.
+ # ibrion = determines how the ions are updated and moved.
+ # potim = sets the step width scaling for ionic relaxations.
+ # iopt = choose which force based optimizer to use (2 = conjugate gradient, 3 = quick-min, 7 = fast inertial relax engine).
 
 
  # Solvent tags
 
- # LSOL = Turn solvent on or off.
- # LAMBDA_D_K = The Debeye length in Angstroms.
- # EB_K = The relative permativity of the solvent.
+ # lsol = turn solvent on or off.
+ # lambda_d_k = the debeye length in angstroms.
+ # eb_k = the relative permativity of the solvent.
 
  # Functional tags
 
- # GGA = Specifies the type of generalised-gradient-approximation one wishes to us.
- # LUSE_VDW = Switches vDW-DF functionals on and off.
- # Zab_VDW = 
+ # gga = specifies the type of generalised-gradient-approximation one wishes to us.
+ # luse_vdw = switches vdw-df functionals on and off.
+ # zab_vdw = 
 
  # Dimer tags
 
- # ICHAIN = Use the dimer method.
- # DdR = The dimer seperation (twice the distance between images).
- # DRotMax = Maximum number of rotation steps per translation step.
+ # ichain = use the dimer method.
+ # ddr = the dimer seperation (twice the distance between images).
+ # drotmax = maximum number of rotation steps per translation step.
  
