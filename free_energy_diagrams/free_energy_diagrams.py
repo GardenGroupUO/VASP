@@ -11,7 +11,7 @@ PyEnergyDiagrams at their GitHub: giacomomarchioro.
 import matplotlib.pyplot as plt
 import pdb
 import numpy as np
-from matplotlib.lines import Line2D as line
+from matplotlib.lines import Line2D
 
 
 
@@ -19,16 +19,18 @@ from matplotlib.lines import Line2D as line
 class FED():
 	
 
-    def __init__(self):
+    def __init__(self, aspect = 'equal'):
         self.ratio = 1.6181
         self.dimension = 'auto'
         self.space = 'auto'
         self.offset = 'auto'
         self.offset_ratio = '0.02'
+        self.aspect = aspect
 
         self.pos_number = 0
         self.energies = []
         self.positions = []
+        self.xtick_labels = []
         self.bottom_texts = []
         self.top_texts = []
         self.left_texts = []
@@ -36,9 +38,12 @@ class FED():
         self.colours = []
         self.links = []
         self.barriers = []
+
+        self.ax = None
+        self.fig = None
         
 
-    def add_level(self, energy, bottom_text='', position=None, 
+    def add_level(self, energy, xtick_label='', bottom_text='', position=None, 
                 top_text='Energy', left_text='', right_text='', color='k'):
         '''
         This is a method of the FED class. It will save all of the data
@@ -88,6 +93,7 @@ class FED():
         
         self.energies.append(energy)
         self.positions.append(position)
+        self.xtick_labels.append(xtick_label)
         self.bottom_texts.append(bottom_text)
         self.top_texts.append(top_text)
         self.left_texts.append(left_text)
@@ -180,7 +186,7 @@ class FED():
         if self.offset == 'auto':
             self.offset = Energy_variation*self.offset_ratio
 
-    def plot(self, ylabel='Energy (Ev)', ax: plt.Axes = None):
+    def plot(self, xlabel='Reaction Progress', ylabel='Energy (Ev)', ax: plt.Axes = None):
         '''
         This is a method of the FED class that will plot the energy diagram.
 
@@ -196,5 +202,93 @@ class FED():
         -------
         fig (plt.figure) and ax (fig.add_subplot())     
         '''
+        if not ax:
+            fig = plt.figure()
+            ax = fig.add_subplot(111, aspect = self.aspect)
+        else:
+            self.ax = ax
+            self.fig = ax.figure
+            self.ax.set_aspect(self.aspect)
+        
+        ax.set_xlabel(xlabel)
+        ax.set_ylabel(ylabel)
+
+
+        self.auto_adjust()
+
+        # Set xticks and their labels
+        ticks = []
+        for i in enumerate(self.positions):
+            start = self.positions[i]*(self.dimension+self.space)
+            end = start+self.dimension
+            xtick_val = start + (end-start)/2
+            ticks.append(xtick_val)
+        
+        ax.set_xticks(ticks, self.xtick_labels)
+
+
+
+        data = list(zip(self.energies,
+                        self.positions,
+                        self.bottom_texts,
+                        self.top_texts,
+                        self.colors,
+                        self.right_texts,
+                        self.left_texts,))
+        
+        for level in data:
+            start = level[1]*(self.dimension+self.space)
+            ax.hlines(level[0], start, start+self.dimension, color=level[4])
+            
+            ax.text(start+self.dimension/2.,  # X
+                    level[0]+self.offset,  # Y
+                    level[3],  # self.top_texts
+                    horizontalalignment='center',
+                    verticalalignment='bottom')
+
+            ax.text(start + self.dimension,  # X
+                    level[0],  # Y
+                    level[5],  # self.bottom_text
+                    horizontalalignment='left',
+                    verticalalignment='center',
+                    color=self.color_bottom_text)
+
+            ax.text(start,  # X
+                    level[0],  # Y
+                    level[6],  # self.bottom_text
+                    horizontalalignment='right',
+                    verticalalignment='center',
+                    color=self.color_bottom_text)
+
+            ax.text(start + self.dimension/2.,  # X
+                    level[0] - self.offset*2,  # Y
+                    level[2],  # self.bottom_text
+                    horizontalalignment='center',
+                    verticalalignment='top',
+                    color=self.color_bottom_text)
+        
+
+            for idx, link in enumerate(self.links):
+                # here we connect the levels with the links
+                # x1, x2   y1, y2
+                for i in link:
+                    # i is a tuple: (end_level_id,ls,linewidth,color)
+                    start = self.positions[idx]*(self.dimension+self.space)
+                    x1 = start + self.dimension
+                    x2 = self.positions[i[0]]*(self.dimension+self.space)
+                    y1 = self.energies[idx]
+                    y2 = self.energies[i[0]]
+                    line = Line2D([x1, x2], [y1, y2],
+                                ls=i[1],
+                                linewidth=i[2],
+                                color=i[3])
+                    ax.add_line(line)
+
+            for idx, barrier in enumerate(self.barriers):
+                for i in barrier:
+                    start = self.positions[idx]*(self.dimension+self.space)
+                    
+                    
+            
         
 
