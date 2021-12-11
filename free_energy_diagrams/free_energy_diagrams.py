@@ -186,7 +186,8 @@ class FED():
         if self.offset == 'auto':
             self.offset = Energy_variation*self.offset_ratio
 
-    def plot(self, xlabel='Reaction Progress', ylabel='Energy (Ev)', ax: plt.Axes = None):
+    def plot(self, xlabel='Reaction Progress', ylabel='Energy (Ev)',
+            ax: plt.Axes = None):
         '''
         This is a method of the FED class that will plot the energy diagram.
 
@@ -268,26 +269,53 @@ class FED():
                     color=self.color_bottom_text)
         
 
-            for idx, link in enumerate(self.links):
-                # here we connect the levels with the links
-                # x1, x2   y1, y2
-                for i in link:
-                    # i is a tuple: (end_level_id,ls,linewidth,color)
-                    start = self.positions[idx]*(self.dimension+self.space)
-                    x1 = start + self.dimension
-                    x2 = self.positions[i[0]]*(self.dimension+self.space)
-                    y1 = self.energies[idx]
-                    y2 = self.energies[i[0]]
-                    line = Line2D([x1, x2], [y1, y2],
-                                ls=i[1],
-                                linewidth=i[2],
-                                color=i[3])
-                    ax.add_line(line)
+        for idx, link in enumerate(self.links):
+            # here we connect the levels with the links
+            # x1, x2   y1, y2
+            for i in link:
+                # i is a tuple: (end_level_id,ls,linewidth,color)
+                start = self.positions[idx]*(self.dimension+self.space)
+                x1 = start + self.dimension
+                x2 = self.positions[i[0]]*(self.dimension+self.space)
+                y1 = self.energies[idx]
+                y2 = self.energies[i[0]]
+                line = Line2D([x1, x2], [y1, y2],
+                            ls=i[1],
+                            linewidth=i[2],
+                            color=i[3])
+                ax.add_line(line)
 
-            for idx, barrier in enumerate(self.barriers):
-                for i in barrier:
-                    start = self.positions[idx]*(self.dimension+self.space)
+        for idx, barrier in enumerate(self.barriers):
+            for i in barrier:
+                start = self.positions[idx]*(self.dimension+self.space)
+                x1 = start + self.dimension
+                y1 = self.energies[idx]
+                x2 = self.positions[i[0]]*(self.dimension+self.space)
+                y2 = self.energies[i[0]]
+                vert_x = x1 + ((x2-x1)/2)
+                vert_y = i[1]
+                a1 = (y1 - vert_y)/((x1 - vert_x)**2)
+                a2 = (y2 - vert_y)/((x2 - vert_x)**2)
+                left_xspace = list(np.linspace(x1, vert_x, 500))
+                right_xpace = list(np.linspace(vert_x, x2, 500))
+                left_yspace = []
+                right_yspace = []
+                for i in left_xspace:
+                    left_y = (a1*((i-vert_x)**2)) + vert_y
+                    left_yspace.append(left_y)
+                    right_y = (a2*((i - vert_x)**2)) + vert_y
+                    right_yspace.append(right_y)
+                overall_xspace = left_xspace + right_xpace
+                overall_yspace = left_yspace + right_yspace
+            ax.plot(overall_xspace, overall_yspace, ls=barrier[2],
+                    linewidth=barrier[3], color=barrier[4])            
+
+
+
+
                     
+
+            
                     
             
         
