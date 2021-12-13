@@ -103,7 +103,7 @@ class FED():
         self.links.append(link)
 
     def add_link(self, start_level_id, end_level_id, color = 'k',
-             ls='--', linewidth=1):
+             ls='--', linewidth=2):
         '''
         This is a method of the FED class that will take in a start and end
         level id (start/end_level_id) and create a linker between those
@@ -234,11 +234,20 @@ class FED():
             start = level[1]*(self.dimension+self.space)
             ax.hlines(level[0], start, start+self.dimension, color=level[4])
             
-            ax.text(start+self.dimension/2.,  # X
+            if level[3] == '':
+                ax.text(start+self.dimension/2.,  # X
+                    level[0]+self.offset,  # Y
+                    str(level[0]),  # self.top_texts
+                    horizontalalignment='center',
+                    verticalalignment='bottom',
+                    color=level[4])
+            else:
+                ax.text(start+self.dimension/2.,  # X
                     level[0]+self.offset,  # Y
                     level[3],  # self.top_texts
                     horizontalalignment='center',
-                    verticalalignment='bottom')
+                    verticalalignment='bottom',
+                    color=level[4])        
 
             ax.text(start + self.dimension,  # X
                     level[0],  # Y
@@ -260,6 +269,7 @@ class FED():
                     horizontalalignment='center',
                     verticalalignment='top',
                     color=self.color_bottom_text)
+        
         
 
         for idx, link in enumerate(self.links):
