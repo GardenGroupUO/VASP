@@ -18,14 +18,24 @@ from matplotlib.lines import Line2D
 
 class FED():
 	
+    golden_ratio = 1.6181
+    offset_ratio = 0.02
 
-    def __init__(self, aspect = 'equal'):
-        self.ratio = 1.6181
-        self.dimension = 'auto'
-        self.space = 'auto'
-        self.offset = 'auto'
-        self.offset_ratio = 0.02
+    def __init__(self, 
+                aspect='equal',
+                level_width=3,
+                barrier_width=1.5,
+                bottom_text_colour='k',
+                dimension = 'auto',
+                space = 'auto',
+                offset = 'auto'):
+
+        self.dimension = dimension
+        self.space = space
+        self.offset = offset
         self.aspect = aspect
+        self.level_width = level_width
+        self.barrier_width = barrier_width
 
         self.pos_number = 0
         self.energies = []
@@ -37,14 +47,16 @@ class FED():
         self.colours = []
         self.links = []
         self.barriers = []
+        self.legends = []
+       
 
         self.ax = None
         self.fig = None
-        self.color_bottom_text = 'blue'
+        self.bottom_text_colour = bottom_text_colour
         
 
-    def add_level(self, energy, bottom_text='', position=None, 
-                top_text='Energy', left_text='', right_text='', color='k'):
+    def add_level(self, energy, bottom_text='', position=None, top_text='Energy',
+                left_text='', right_text='', color='k', label=''):
         '''
         This is a method of the FED class. It will save all of the data
         for a new energy level into the lists required.
@@ -101,9 +113,10 @@ class FED():
         self.right_texts.append(right_text)
         self.colours.append(color)
         self.links.append(link)
+        self.legends.append(label)
 
     def add_link(self, start_level_id, end_level_id, color = 'k',
-             ls='--', linewidth=2):
+             ls='--', linewidth=1):
         '''
         This is a method of the FED class that will take in a start and end
         level id (start/end_level_id) and create a linker between those
@@ -133,8 +146,33 @@ class FED():
 
         self.links[start_level_id].append((end_level_id, ls, linewidth, color))
 
+    def auto_adjust(self):
+        '''
+        This method of the FED class will use the golden ratio to set the 
+        best dimension and space between the levels.
+
+        Affects
+        
+        self.dimension
+        self.space
+        self.offset
+        '''
+        # Max range between the energy
+        Energy_variation = abs(max(self.energies) - min(self.energies))
+        if self.dimension == 'auto' or self.space == 'auto':
+            # Unique positions of the levels
+            unique_positions = float(len(set(self.positions)))
+            space_for_level = Energy_variation*FED.golden_ratio/unique_positions
+            self.dimension = space_for_level*0.7
+            self.space = space_for_level*0.3
+
+        if self.offset == 'auto':
+            self.offset = Energy_variation*FED.offset_ratio
+
+
+
     def add_barrier(self, energy, start_level_id, end_level_id,
-                    ls='-', linewidth=0.5, color='k'):
+                    ls='-', color='k'):
         '''
         This is a method of the FED class that will take in a start/end level id 
         and an energy and create a barrier between those two levels. 
@@ -162,30 +200,31 @@ class FED():
         list in the class barriers attribute. 
         '''
 
-        self.barriers.append((start_level_id, end_level_id, energy, ls, linewidth, color))
+        self.auto_adjust()
 
-    def auto_adjust(self):
-        '''
-        This method of the FED class will use the golden ratio to set the 
-        best dimension and space between the levels.
-
-        Affects
-        
-        self.dimension
-        self.space
-        self.offset
-        '''
-        # Max range between the energy
-        Energy_variation = abs(max(self.energies) - min(self.energies))
-        if self.dimension == 'auto' or self.space == 'auto':
-            # Unique positions of the levels
-            unique_positions = float(len(set(self.positions)))
-            space_for_level = Energy_variation*self.ratio/unique_positions
-            self.dimension = space_for_level*0.7
-            self.space = space_for_level*0.3
-
-        if self.offset == 'auto':
-            self.offset = Energy_variation*self.offset_ratio
+        start = self.positions[start_level_id-1]*(self.dimension+self.space)
+        x1 = start + self.dimension
+        y1 = self.energies[start_level_id-1]
+        x2 = self.positions[end_level_id-1]*(self.dimension+self.space)
+        y2 = self.energies[end_level_id-1]
+        vert_x = x1 + ((x2-x1)/2)
+        vert_y = energy
+        a1 = (y1 - vert_y)/((x1 - vert_x)**2)
+        a2 = (y2 - vert_y)/((x2 - vert_x)**2)
+        left_xspace = list(np.linspace(x1, vert_x, 500))
+        right_xspace = list(np.linspace(vert_x, x2, 500))
+        left_yspace = []
+        right_yspace = []
+        for y in left_xspace:
+            left_y = (a1*((y - vert_x)**2)) + vert_y
+            left_yspace.append(left_y)
+        for x in right_xspace:
+            right_y = (a2*((x - vert_x)**2)) + vert_y
+            right_yspace.append(right_y)
+        overall_xspace = left_xspace + right_xspace
+        overall_yspace = left_yspace + right_yspace
+        self.barriers.append((overall_xspace, overall_yspace, ls, color, vert_x, vert_y))
+    
 
     def plot(self, xlabel='Reaction Progress', ylabel='Energy (Ev)',
             ax: plt.Axes = None):
@@ -228,47 +267,41 @@ class FED():
                         self.top_texts,
                         self.colours,
                         self.right_texts,
-                        self.left_texts,))
+                        self.left_texts,
+                        self.legends))
         
         for level in data:
             start = level[1]*(self.dimension+self.space)
-            ax.hlines(level[0], start, start+self.dimension, color=level[4])
+            ax.hlines(level[0], start, start+self.dimension, color=level[4], label=level[7], linewidth=self.level_width)
             
-            if level[3] == '':
-                ax.text(start+self.dimension/2.,  # X
-                    level[0]+self.offset,  # Y
-                    str(level[0]),  # self.top_texts
-                    horizontalalignment='center',
-                    verticalalignment='bottom',
-                    color=level[4])
-            else:
-                ax.text(start+self.dimension/2.,  # X
+            
+            ax.text(start+self.dimension/2.,  # X
                     level[0]+self.offset,  # Y
                     level[3],  # self.top_texts
                     horizontalalignment='center',
                     verticalalignment='bottom',
-                    color=level[4])        
+                    color=self.bottom_text_colour)        
 
             ax.text(start + self.dimension,  # X
                     level[0],  # Y
                     level[5],  # self.bottom_text
                     horizontalalignment='left',
                     verticalalignment='center',
-                    color=self.color_bottom_text)
+                    color=self.bottom_text_colour)
 
             ax.text(start,  # X
                     level[0],  # Y
                     level[6],  # self.bottom_text
                     horizontalalignment='right',
                     verticalalignment='center',
-                    color=self.color_bottom_text)
+                    color=self.bottom_text_colour)
 
             ax.text(start + self.dimension/2.,  # X
                     level[0] - self.offset*2,  # Y
                     level[2],  # self.bottom_text
                     horizontalalignment='center',
                     verticalalignment='top',
-                    color=self.color_bottom_text)
+                    color=self.bottom_text_colour)
         
         
 
@@ -288,31 +321,12 @@ class FED():
                             color=i[3])
                 ax.add_line(line)
 
+
         
         for i in self.barriers:
-            start = self.positions[i[0]-1]*(self.dimension+self.space)
-            x1 = start + self.dimension
-            y1 = self.energies[i[0]-1]
-            x2 = self.positions[i[1]-1]*(self.dimension+self.space)
-            y2 = self.energies[i[1]-1]
-            vert_x = x1 + ((x2-x1)/2)
-            vert_y = i[2]
-            a1 = (y1 - vert_y)/((x1 - vert_x)**2)
-            a2 = (y2 - vert_y)/((x2 - vert_x)**2)
-            left_xspace = list(np.linspace(x1, vert_x, 500))
-            right_xspace = list(np.linspace(vert_x, x2, 500))
-            left_yspace = []
-            right_yspace = []
-            for y in left_xspace:
-                left_y = (a1*((y - vert_x)**2)) + vert_y
-                left_yspace.append(left_y)
-            for x in right_xspace:
-                right_y = (a2*((x - vert_x)**2)) + vert_y
-                right_yspace.append(right_y)
-            overall_xspace = left_xspace + right_xspace
-            overall_yspace = left_yspace + right_yspace
-            ax.plot(overall_xspace, overall_yspace, ls=i[3],
-                    linewidth=i[4], color=i[5])            
+            ax.plot(i[0], i[1], ls=i[2],
+                    linewidth=self.barrier_width, color=i[3])
+        plt.legend(loc='upper left')            
 
 
 
