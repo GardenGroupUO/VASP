@@ -56,7 +56,7 @@ class FED():
         
         
 
-    def add_level(self, energy, bottom_text='', position=None, top_text='Energy',
+    def add_level(self, energy, bottom_text='', position=None, top_text='',
                 left_text='', right_text='', color='k', label=''):
         '''
         This is a method of the FED class. It will save all of the data
@@ -101,8 +101,8 @@ class FED():
                 "Position must be None or 'last' (abrv. 'l'. It was: %s" % position
             )
         
-        if top_text == 'Energy':
-            top_text = energy
+        #if top_text == 'Energy':
+        #    top_text = energy
         
         link = []
         
