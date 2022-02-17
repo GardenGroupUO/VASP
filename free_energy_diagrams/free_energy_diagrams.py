@@ -278,29 +278,29 @@ class FED():
             level_centre = start + 0.5*self.dimension
             level_xpos_list.append(level_centre)
             
-            ax.text(start+self.dimension/2.,  # X
+            ax.text(start+self.dimension/2,  # X
                     level[0]+self.offset,  # Y
                     level[3],  # self.top_texts
                     horizontalalignment='center',
                     verticalalignment='bottom',
                     color=level[4])        
 
-            ax.text(start + self.dimension,  # X
+            ax.text(start + self.dimension + self.offset,  # X
                     level[0],  # Y
-                    level[5],  # self.bottom_text
+                    level[5],  # self.right_text
                     horizontalalignment='left',
                     verticalalignment='center',
                     color=level[4])
 
-            ax.text(start,  # X
+            ax.text(start - self.offset,  # X
                     level[0],  # Y
-                    level[6],  # self.bottom_text
+                    level[6],  # self.left_text
                     horizontalalignment='right',
                     verticalalignment='center',
                     color=level[4])
 
-            ax.text(start + self.dimension/2.,  # X
-                    level[0] - self.offset*2,  # Y
+            ax.text(start + self.dimension/2,  # X
+                    level[0] - self.offset,  # Y
                     level[2],  # self.bottom_text
                     horizontalalignment='center',
                     verticalalignment='top',
