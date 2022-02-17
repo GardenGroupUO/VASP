@@ -21,15 +21,16 @@ class FED():
     golden_ratio = 1.6181
     offset_ratio = 0.02
 
-    def __init__(self, 
+    def __init__(self,
+                reaction_coords = [],
                 aspect='equal',
                 level_width=3,
                 barrier_width=1.5,
-                bottom_text_colour='k',
                 dimension = 'auto',
                 space = 'auto',
                 offset = 'auto'):
 
+        self.reaction_coords = reaction_coords
         self.dimension = dimension
         self.space = space
         self.offset = offset
@@ -52,7 +53,7 @@ class FED():
 
         self.ax = None
         self.fig = None
-        self.bottom_text_colour = bottom_text_colour
+        
         
 
     def add_level(self, energy, bottom_text='', position=None, top_text='Energy',
@@ -253,11 +254,12 @@ class FED():
         
         ax.set_xlabel(xlabel)
         ax.set_ylabel(ylabel)
-        ax.axes.get_xaxis().set_visible(False)
+        
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
         ax.spines['bottom'].set_visible(False)
 
+        level_xpos_list = []
 
         self.auto_adjust()
 
@@ -273,37 +275,45 @@ class FED():
         for level in data:
             start = level[1]*(self.dimension+self.space)
             ax.hlines(level[0], start, start+self.dimension, color=level[4], label=level[7], linewidth=self.level_width)
-            
+            level_centre = start + 0.5*self.dimension
+            level_xpos_list.append(level_centre)
             
             ax.text(start+self.dimension/2.,  # X
                     level[0]+self.offset,  # Y
                     level[3],  # self.top_texts
                     horizontalalignment='center',
                     verticalalignment='bottom',
-                    color=self.bottom_text_colour)        
+                    color=level[4])        
 
             ax.text(start + self.dimension,  # X
                     level[0],  # Y
                     level[5],  # self.bottom_text
                     horizontalalignment='left',
                     verticalalignment='center',
-                    color=self.bottom_text_colour)
+                    color=level[4])
 
             ax.text(start,  # X
                     level[0],  # Y
                     level[6],  # self.bottom_text
                     horizontalalignment='right',
                     verticalalignment='center',
-                    color=self.bottom_text_colour)
+                    color=level[4])
 
             ax.text(start + self.dimension/2.,  # X
                     level[0] - self.offset*2,  # Y
                     level[2],  # self.bottom_text
                     horizontalalignment='center',
                     verticalalignment='top',
-                    color=self.bottom_text_colour)
+                    color=level[4])
+    
+        xtick_pos = []
+        for item in level_xpos_list:
+            if item not in xtick_pos:
+                xtick_pos.append(item)
         
-        
+        ax.set_xticks(xtick_pos) 
+        ax.set_xticklabels(self.reaction_coords)
+        ax.tick_params(axis='x', colors='white', labelcolor='black')
 
         for idx, link in enumerate(self.links):
             # here we connect the levels with the links
