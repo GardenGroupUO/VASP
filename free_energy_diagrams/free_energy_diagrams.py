@@ -28,7 +28,9 @@ class FED():
                 barrier_width=1.5,
                 dimension = 'auto',
                 space = 'auto',
-                offset = 'auto'):
+                offset = 'auto',
+                ylabel = 'Energy (Ev)',
+                xlabel = 'Reaction Progress'):
 
         self.reaction_coords = reaction_coords
         self.dimension = dimension
@@ -227,8 +229,7 @@ class FED():
         self.barriers.append((overall_xspace, overall_yspace, ls, color, vert_x, vert_y))
     
 
-    def plot(self, xlabel='Reaction Progress', ylabel='Energy (Ev)',
-            ax: plt.Axes = None):
+    def plot(self, ax: plt.Axes = None):
         '''
         This is a method of the FED class that will plot the energy diagram.
 
@@ -252,8 +253,8 @@ class FED():
             self.fig = ax.figure
             self.ax.set_aspect(self.aspect)
         
-        ax.set_xlabel(xlabel)
-        ax.set_ylabel(ylabel)
+        ax.set_xlabel(self.xlabel)
+        ax.set_ylabel(self.ylabel)
         
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
