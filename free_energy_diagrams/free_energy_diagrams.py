@@ -39,6 +39,8 @@ class FED():
         self.aspect = aspect
         self.level_width = level_width
         self.barrier_width = barrier_width
+        self.xlabel = xlabel
+        self.ylabel = ylabel
 
         self.pos_number = 0
         self.energies = []
