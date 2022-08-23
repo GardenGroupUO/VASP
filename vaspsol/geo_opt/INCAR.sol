@@ -41,7 +41,7 @@
  # Standard VASP tags
 
  # ENCUT = Specifies the cutoff energy for the plane wave basis set in eV.
- # NELECT = Sets the number of electrons.
+ # 
  # AMIX = Specifies the linear mixing parameter.
  # EDIFF = Specifies the global break condition for the electronic Selfconsistent-loop in eV.
  # EDIFFG = Defines the break condition for the ionic relaxation loop.
