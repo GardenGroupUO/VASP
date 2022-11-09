@@ -29,7 +29,7 @@ class FED():
                 dimension = 'auto',
                 space = 'auto',
                 offset = 'auto',
-                ylabel = 'Energy (Ev)',
+                ylabel = 'Energy (eV)',
                 xlabel = 'Reaction Progress'):
 
         self.reaction_coords = reaction_coords
